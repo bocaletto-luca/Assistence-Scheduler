@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <!-- Impostazione viewport per dispositivi mobili -->
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Assistence Scheduler</title>
+  
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+  <!-- FullCalendar CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet" />
+  
+  <style>
+    /* BASE STYLING */
+    body {
+      background-color: #f8f9fa;
+      padding-top: 20px;
+      padding-bottom: 20px;
+    }
+    .container {
+      max-width: 960px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    /* TOOLBAR */
+    .toolbar {
+      margin-bottom: 15px;
+    }
+    .toolbar button {
+      margin-right: 10px;
+    }
+    /* Solo il contenuto del tab attivo viene mostrato */
+    .section { display: none; }
+    .section.active { display: block; }
+    /* FULLCALENDAR */
+    #calendar { margin-top: 10px; }
+    /* YEAR VIEW */
+    #yearView { margin-top: 10px; }
+    .year-calendar {
+      border: 1px solid #ccc;
+      padding: 5px;
+      margin-bottom: 10px;
+      height: 350px;      /* Altezza fissa per mostrare l'intera griglia */
+      overflow: visible;
+    }
+    .month-header {
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    table.mini-calendar {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    table.mini-calendar th, 
+    table.mini-calendar td {
+      border: 1px solid #ddd;
+      text-align: center;
+      padding: 2px;
+      font-size: 0.8rem;
+    }
+    table.mini-calendar th {
+      background-color: #f0f0f0;
+    }
+    table.mini-calendar td {
+      cursor: pointer;
+    }
+    table.mini-calendar td.red {
+      color: red;
+      font-weight: bold;
+    }
+    /* SEARCH FIELDS */
+    .search-container {
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+    /* FOOTER */
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      padding: 10px 0;
+      border-top: 1px solid #ddd;
+      color: #777;
+    }
+  </style>
+  
+</head>
+<body>
+  <div class="container">
+    <h1>Assistence Scheduler</h1>
+    
+    <!-- Toolbar per la gestione degli eventi (questa toolbar opera sull'intera parte eventi) -->
+    <div class="toolbar">
+      <button id="addEventBtn" class="btn btn-primary">Add Event</button>
+      <button id="exportJSONBtn" class="btn btn-success">Export Events JSON</button>
+      <button id="exportCSVBtn" class="btn btn-info">Export Events CSV</button>
+      <input type="file" id="importInput" accept="application/json" style="display: none;">
+      <button id="importBtn" class="btn btn-outline-success">Import Events</button>
+      <button id="printBtn" class="btn btn-secondary">Print</button>
+      <button id="refreshBtn" class="btn btn-warning">Refresh</button>
+    </div>
+    
+    <!-- Nav Tabs: Calendar, List, Year, Agenda -->
+    <ul class="nav nav-tabs" id="mainTabs">
+      <li class="nav-item">
+        <a class="nav-link active" data-target="calendarView">Calendar View</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-target="listView">List View</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-target="yearView">Year View</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-target="agendaView">Agenda</a>
+      </li>
+    </ul>
+    
+    <!-- SECTION: Calendar View -->
+    <div id="calendarView" class="section active">
+      <div id="calendar"></div>
+    </div>
+    
+    <!-- SECTION: List View -->
+    <div id="listView" class="section">
+      <!-- Campo di ricerca eventi -->
+      <div class="search-container">
+        <input type="text" id="eventSearchInput" class="form-control" placeholder="Search events...">
+        <button id="eventSearchBtn" class="btn btn-secondary mt-2">Search</button>
+      </div>
+      <div id="listContainer" class="mt-3"></div>
+    </div>
+    
+    <!-- SECTION: Year View -->
+    <div id="yearView" class="section">
+      <div class="row" id="yearCalendarsContainer"></div>
+    </div>
+    
+    <!-- SECTION: Agenda (Clienti) -->
+    <div id="agendaView" class="section">
+      <h4>Agenda (Clients)</h4>
+      <!-- Campo di ricerca clienti -->
+      <div class="search-container">
+        <input type="text" id="clientSearchInput" class="form-control" placeholder="Search clients...">
+        <button id="clientSearchBtn" class="btn btn-secondary mt-2">Search</button>
+      </div>
+      <!-- Form per aggiungere/modificare un cliente -->
+      <form id="clientForm" class="mb-3">
+        <div class="row g-2">
+          <div class="col-md-3">
+            <input type="text" id="clientName" class="form-control" placeholder="Client Name" required>
+          </div>
+          <div class="col-md-3">
+            <input type="text" id="clientPhone" class="form-control" placeholder="Phone Number" required>
+          </div>
+          <div class="col-md-3">
+            <input type="text" id="clientAddress" class="form-control" placeholder="Address" required>
+          </div>
+          <div class="col-md-3">
+            <input type="text" id="clientExtra" class="form-control" placeholder="Extra">
+          </div>
+        </div>
+        <input type="hidden" id="clientId">
+        <div class="mt-2">
+          <button type="submit" id="saveClientBtn" class="btn btn-primary">Save Client</button>
+          <button type="button" id="clearClientFormBtn" class="btn btn-secondary">Clear Form</button>
+        </div>
+      </form>
+      <!-- Tabella Clienti -->
+      <div id="clientTableContainer"></div>
+      <!-- Pulsanti Import/Export Agenda -->
+      <div class="mt-2">
+        <button id="exportAgendaJSONBtn" class="btn btn-success">Export Agenda JSON</button>
+        <button id="exportAgendaCSVBtn" class="btn btn-info">Export Agenda CSV</button>
+        <input type="file" id="importAgendaInput" accept="application/json" style="display: none;">
+        <button id="importAgendaBtn" class="btn btn-outline-success">Import Agenda</button>
+      </div>
+    </div>
+    
+  </div> <!-- Fine Container -->
+  
+  <!-- FOOTER -->
+  <footer>
+    Bocaletto Luca
+  </footer>
+  
+  <!-- Modal per Add/Edit Event -->
+  <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form id="eventForm">
+          <div class="modal-header">
+            <h5 class="modal-title" id="eventModalLabel">Add Event</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <!-- Campo nascosto per l'ID dell'evento -->
+            <input type="hidden" id="eventId">
+            <div class="form-group mb-3">
+              <label for="eventDate" class="form-label">Date</label>
+              <input type="date" id="eventDate" class="form-control" required>
+            </div>
+            <div class="form-group mb-3">
+              <label for="eventTime" class="form-label">Appointment Time</label>
+              <input type="time" id="eventTime" class="form-control" required>
+            </div>
+            <div class="form-group mb-3">
+              <label for="eventTitle" class="form-label">Title</label>
+              <input type="text" id="eventTitle" class="form-control" placeholder="Enter event title" required>
+            </div>
+            <div class="form-group mb-3">
+              <label for="eventDescription" class="form-label">Description</label>
+              <textarea id="eventDescription" class="form-control" rows="2" placeholder="Enter event description" required></textarea>
+            </div>
+            <div class="form-group mb-3">
+              <label for="eventClientSelect" class="form-label">Client</label>
+              <select id="eventClientSelect" class="form-control">
+                <option value="">-- Select Client --</option>
+              </select>
+            </div>
+            <div class="form-group mb-3">
+              <label for="eventClientPhone" class="form-label">Client Phone</label>
+              <input type="text" id="eventClientPhone" class="form-control" readonly>
+            </div>
+            <div class="form-group mb-3">
+              <label for="eventClientAddress" class="form-label">Client Address</label>
+              <input type="text" id="eventClientAddress" class="form-control" readonly>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" id="deleteEventBtn" class="btn btn-danger" style="display: none;">Delete Event</button>
+            <button type="submit" class="btn btn-primary">Save Event</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal per la Lista degli Eventi (Year View) -->
+  <div class="modal fade" id="eventListModal" tabindex="-1" aria-labelledby="eventListModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="eventListModalLabel">Select Event</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="eventListContainer">
+          <!-- La lista degli eventi per il giorno verrà generata qui -->
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Bootstrap Bundle con Popper JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- FullCalendar JS -->
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+  <!-- main.js -->
+  <script src="main.js"></script>
+  
+  <!-- Script per i campi di ricerca -->
+  <script>
+    // Pulsante di ricerca per gli eventi nel List View
+    document.getElementById("eventSearchBtn").addEventListener("click", function () {
+      searchEvents();
+    });
+    
+    // Pulsante di ricerca per i clienti nell'Agenda
+    document.getElementById("clientSearchBtn").addEventListener("click", function () {
+      searchClients();
+    });
+  </script>
+</body>
+</html>
