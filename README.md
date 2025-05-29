@@ -7,60 +7,74 @@
 [![Bootstrap](https://img.shields.io/badge/Bootstrap-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white)](https://getbootstrap.com)
 [![FullCalendar](https://img.shields.io/badge/FullCalendar-3788D8?style=for-the-badge&logo=fullcalendar&logoColor=white)](https://fullcalendar.io)
 
-Assistence Scheduler è un'applicazione web completa per la gestione di appuntamenti ed agenda clienti. L'app consente di:
-  
-- **Gestire gli eventi** in tre visualizzazioni:
-  - **Calendar View**: Un calendario interattivo (basato su FullCalendar) in cui è possibile aggiungere, modificare ed eliminare eventi.
-  - **List View**: Gli eventi sono visualizzati come card e possono essere filtrati tramite un campo di ricerca.
-  - **Year View**: Vengono generati 12 mini-calendari (uno per ciascun mese) che mostrano la griglia completa dei giorni; se in un giorno sono presenti più eventi, cliccandolo si apre un modal che mostra la lista degli eventi e consente di aggiungere uno nuovo per quel giorno.
-  
-- **Gestire l'agenda clienti**:
-  - Aggiungi, modifica ed elimina clienti.
-  - Ogni cliente possiede: **Client Name, Phone Number, Address,** e un campo **Extra**.
-  - Il tab Agenda include anche un campo di ricerca per filtrare i clienti.
-  
-- **Toolbar globale per gli eventi**:
-  - Aggiungi Event
-  - Export Events (JSON e CSV)
-  - Import Events (JSON)
-  - Print
-  - Refresh
-  
-- **Persistenza locale**: Tutti i dati (Eventi e Agenda) vengono salvati in `localStorage`.
+---
+
+## Description
+
+**Assistence Scheduler** is a complete web application for managing appointments and a client agenda. The app enables you to:
+
+- **Manage Events in Three Views:**
+  - **Calendar View:** An interactive calendar (powered by FullCalendar) where you can add, edit, and delete events by clicking on a day.  
+  - **List View:** Events are displayed as cards and can be filtered via a search field.  
+  - **Year View:** Displays 12 mini-calendars (one per month) showing a full grid of days. If multiple events exist on a day, clicking the day opens a modal with the list of events and provides an option to add a new event for that day.
+
+- **Manage Client Agenda:**
+  - Add, edit, and delete clients.
+  - Each client has: **Client Name**, **Phone Number**, **Address**, and an **Extra** field.
+  - The Agenda tab also includes a search field to filter clients.
+
+- **Global Toolbar for Events:**
+  - **Add Event**
+  - **Export Events** (in JSON and CSV formats)
+  - **Import Events** (from JSON)
+  - **Print**
+  - **Refresh**
+
+- **Local Persistence:**
+  - All data—including Events and Agenda—is saved in `localStorage`.
 
 ---
 
-## Caratteristiche
+## Features
 
-- **Event Management**
-  - Aggiunta, modifica ed eliminazione degli eventi tramite modali.
-  - Gli eventi includono data, orario, titolo, descrizione e, opzionalmente, dati del cliente (se selezionato dall'agenda).
-  - Interfaccia interattiva con tre visualizzazioni: Calendar View, List View e Year View.
+### Event Management
+- **Add, Edit, Delete Events:**  
+  Use modals to create, update, or remove events.
+- **Event Data:**  
+  Each event stores a date, appointment time, title, description, and (optionally) client details (if selected from the Agenda).
+- **Multiple Views:**  
+  Enjoy an interactive Calendar View, a filtered List View, and a visual Year View.
 
-- **Client Management (Agenda)**
-  - Gestione completa dei clienti: aggiunta, modifica, eliminazione e ricerca.
-  - I clienti vengono utilizzati per compilare automaticamente i dettagli nel modulo per gli eventi.
-  
-- **Ricerca**
-  - Campo di ricerca nella List View per filtrare gli eventi.
-  - Campo di ricerca nel tab Agenda per filtrare i clienti.
+### Client Management (Agenda)
+- **Full Client CRUD:**  
+  Add, edit, delete, and search your clients.
+- **Automatic Client Details:**  
+  When creating an event, select a client from a dropdown (populated from your Agenda) so that the client’s phone and address auto-fill.
 
-- **Import/Export**
-  - Esportazione ed importazione degli eventi in formato JSON e CSV.
-  - Esportazione ed importazione dei clienti (agenda) in formato JSON e CSV.
+### Search Functionality
+- **Events Search:**  
+  Filter events in the List View by title or description.
+- **Clients Search:**  
+  Filter clients in the Agenda by name, phone number, address, or extra field.
 
-- **Tecnologie Utilizzate**
-  - HTML5, CSS3, JavaScript
-  - [Bootstrap](https://getbootstrap.com)
-  - [FullCalendar](https://fullcalendar.io)
+### Import/Export
+- **Events and Agenda:**  
+  Easily export and import events and client data in both JSON and CSV formats.
+
+### Technologies Used
+- **HTML5**
+- **CSS3**
+- **JavaScript**
+- **Bootstrap**
+- **FullCalendar**
 
 ---
 
-## Installazione e Uso
+## Installation and Usage
 
-1. **Clona il repository**
+1. **Clone this repository:**
    ```bash
    git clone https://github.com/bocaletto-luca/assistence-scheduler.git
-2. Start Webserver and open page in BrowserWeb
+2. Start webserver and open page in browserweb
 
-#### Enjoy WebAPP | By Bocaletto Luca
+#### Wnjoy WEBAPP | By Bocaletto Luca
